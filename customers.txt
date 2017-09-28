@@ -1,0 +1,253 @@
+swagger: '2.0'
+info:
+  version: 1.0.0.0.
+  title: Customers API
+  description: >-
+    The Customers API allows you to retrieve basic bank customer information like name, mailing address, email address and phone numbers.
+host: sandbox.api.sap.com
+schemes:
+  - https
+basePath: /customers
+securityDefinitions:
+  basicAuth:
+    type: basic
+    description: HTTP Basic Authentication. Works over `HTTP` and `HTTPS`
+x-sap-api-type: ODATA
+paths:
+  /Customers/name:
+    get:
+      tags:
+        - name
+      description: Returns the bank customer's name, including surname, prefix and suffix.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'client_id generated during consumer onboarding'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: The list of accounts for the current user
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Customers/email:
+    get:
+      tags:
+        - email
+      description: Returns the bank customer's email address.
+      parameters:
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Customers/address:
+    get:
+      tags:
+        - address
+      description: Returns the bank customer's primary mailing address.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Customers/phone:
+    put:
+      tags:
+        - phone
+      description: Returns the bank customer's home, office and mobile phone numbers.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Customers/profile:
+    get:
+      tags:
+        - profile
+      description: Returns the bank customer's name, email address, mailing address and phone numbers.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  accounts:
+    type: object
+    properties:
+      Id:
+        type: string
+      Number:
+        type: string
+      BankID:
+        type: string
+      BankName:
+        type: string
+      NickName:
+        type: string
+      Type:
+        type: string
+      Status:
+        type: string
+      CurrencyCode:
+        type: string
+      TrackingID:
+        type: string
+      AccountGroup:
+        type: string
+      PrimaryAccount:
+        type: string
+      CoreAccount:
+        type: string
+      RoutingNum:
+        type: string
+      LocationID:
+        type: string
+      AccountDisplayText:
+        type: string
+      PriorDayBalance:
+        type: string
+      CurrentBalance:
+        type: string
+      AvailableBalance:
+        type: string
+      Account:
+        $ref: '#/definitions/accounts'
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      code:
+        type: integer
+        format: int32
+      fields:
+        type: string

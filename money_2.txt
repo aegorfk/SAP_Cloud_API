@@ -1,0 +1,654 @@
+swagger: '2.0'
+info:
+  version: 1.0.0.0.
+  title: Money Movement API
+  description: >-
+    The Money Movement API allows you to move money within the market of the account of the bank customer who authorized your app.
+host: sandbox.api.sap.com
+schemes:
+  - https
+basePath: /cmoneyMovement
+securityDefinitions:
+  basicAuth:
+    type: basic
+    description: HTTP Basic Authentication. Works over `HTTP` and `HTTPS`
+x-sap-api-type: ODATA
+paths:
+  /Money/sourceAccounts:
+    get:
+      tags:
+        - sourceAccounts
+      description: Returns valid combinations of destination and source accounts of all payment types for an authenticated bank Customer. This information can be used to prepare a valid source list for a selected destination, or vice versa.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: paymentType
+          in: query
+          description: 'Payment Type. This is a reference data field.'
+          required: false
+          type: string
+        - name: nextStartIndex
+          in: query
+          description: 'In some cases there is more data than what can be returned in a single response. If there is additional data available a nextStartIndex will be returned. Pass the nextStartIndex in your next request to retrieve the next set of data.'
+          required: false
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: The list of accounts for the current user
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Money/payees:
+    get:
+      tags:
+        - payees
+      description: Returns a list of payees (active and inactive) or destination accounts for the customer who authorized your app.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: paymentType
+          in: query
+          description: 'Payment Type. This is a reference data field.'
+          required: false
+          type: string
+        - name: nextStartIndex
+          in: query
+          description: 'In some cases there is more data than what can be returned in a single response. If there is additional data available a nextStartIndex will be returned. Pass the nextStartIndex in your next request to retrieve the next set of data.'
+          required: false
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Money/personal:
+    get:
+      tags:
+        - personal
+      description: Returns the valid combinations of personal domestic transfer destination and source accounts. This information may be used to prepare a valid source list for a selected destination, or vice versa.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Money/personalTransfer:
+    post:
+      tags:
+        - personalTransfer
+      description: Creates a new personal domestic transfer and verifys that there are no errors. The response from this resource should be used to construct a pre-confirmation page so the customer can review the transaction before confirming.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: preprocessFundTransferRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Money/confirmPersonalTransfer:
+    post:
+      tags:
+        - confirmPersonalTransfer
+      description: Confirms the personal transfer. It should be called after successfully creating the personal transfer. If successful, it will return a confirmation number that should be displayed and stored.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: personalDomesticTransferRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Money/internalTransfer:
+    post:
+      tags:
+        - internalTransfer
+      description: Creates a new internal domestic transfer and verifys that there are no errors. The response from this resource should be used to construct a pre-confirmation page so the customer can review the transaction before confirming.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: preprocessFundTransferRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Money/confirmInternalTransfer:
+    post:
+      tags:
+        - confirmInternalTransfer
+      description: Confirms the internal domestic transfer. It should be called after successfully creating the internal transfer. If successful, it will return a confirmation number that should be displayed and stored.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: internalDomesticTransferRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Money/internalAccounts:
+    get:
+      tags:
+        - internalAccounts
+      description: RReturns the valid combinations of external domestic transfer destination and source accounts.This information may be used to prepare a valid source list for a selected destination, or vice versa.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: nextStartIndex
+          in: query
+          description: 'In some cases there is more data than what can be returned in a single response. If there is additional data available a nextStartIndex will be returned. Pass the nextStartIndex in your next request to retrieve the next set of data.'
+          required: false
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: The list of accounts for the current user
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Money/externalAccounts:
+    get:
+      tags:
+        - externalAccounts
+      description: Returns the valid combinations of external domestic transfer destination and source accounts.This information may be used to prepare a valid source list for a selected destination, or vice versa.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: nextStartIndex
+          in: query
+          description: 'In some cases there is more data than what can be returned in a single response. If there is additional data available a nextStartIndex will be returned. Pass the nextStartIndex in your next request to retrieve the next set of data.'
+          required: false
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: The list of accounts for the current user
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Money/externalTransfer:
+    post:
+      tags:
+        - externalTransfer
+      description: Creates a new external domestic transfer and verifys that there are no errors. The response from this resource should be used to construct a pre-confirmation page so the customer can review the transaction before confirming.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: preprocessFundTransferRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Money/confirmExternalTransfer:
+    post:
+      tags:
+        - confirmExternalTransfer
+      description: Confirms the external domestic transfer. It should be called after successfully creating the external domestic transfer. If successful, it will return a confirmation number that should be displayed and stored.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: externalDomesticTransferRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Money/sourceBill:
+    get:
+      tags:
+        - sourceBill
+      description: Returns the valid combinations of domestic bill pay destination and source accounts.This information may be used to prepare a valid source list for a selected destination, or vice versa.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: nextStartIndex
+          in: query
+          description: 'In some cases there is more data than what can be returned in a single response. If there is additional data available a nextStartIndex will be returned. Pass the nextStartIndex in your next request to retrieve the next set of data.'
+          required: false
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: The list of accounts for the current user
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Money/createBill:
+    post:
+      tags:
+        - createBill
+      description: Creates a new domestic bill payment and verifies that there are no errors. The response from this resource should be used to construct a pre-confirmation page so the customer can review the transaction before confirming.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: billPaymentPreprocessRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  accounts:
+    type: object
+    properties:
+      Id:
+        type: string
+      Number:
+        type: string
+      BankID:
+        type: string
+      BankName:
+        type: string
+      NickName:
+        type: string
+      Type:
+        type: string
+      Status:
+        type: string
+      CurrencyCode:
+        type: string
+      TrackingID:
+        type: string
+      AccountGroup:
+        type: string
+      PrimaryAccount:
+        type: string
+      CoreAccount:
+        type: string
+      RoutingNum:
+        type: string
+      LocationID:
+        type: string
+      AccountDisplayText:
+        type: string
+      PriorDayBalance:
+        type: string
+      CurrentBalance:
+        type: string
+      AvailableBalance:
+        type: string
+      Account:
+        $ref: '#/definitions/accounts'
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      code:
+        type: integer
+        format: int32
+      fields:
+        type: string

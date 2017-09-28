@@ -1,0 +1,229 @@
+swagger: '2.0'
+info:
+  version: 1.0.0.0.
+  title: Accounts API
+  description: >-
+    The Accounts API allows you to retrieve account and transaction data for bank Customers who have authorized your app. In most cases, you'll want to request a summary of all accounts first, which will return basic account information and accountIds. Once you have this information, you can request additional account details and/or transactions.
+host: sandbox.api.sap.com
+schemes:
+  - https
+basePath: /accounts
+securityDefinitions:
+  basicAuth:
+    type: basic
+    description: HTTP Basic Authentication. Works over `HTTP` and `HTTPS`
+x-sap-api-type: ODATA
+paths:
+  /Accounts/summary:
+    get:
+      tags:
+        - summary
+      description: Returns a summary of all accounts held by a Citi customer who has authorized your application. If a customer has multiple but similar accounts, e.g. two savings accounts, the accounts will be returned in the array accountGroupSummary.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'client_id generated during consumer onboarding'
+          required: true
+          type: string
+        - name: nextStartIndex
+          in: query
+          description: 'In some cases there is more data than what can be returned in a single response. If there is additional data available a nextStartIndex will be returned. Pass the nextStartIndex in your next request to retrieve the next set of data.'
+          required: false
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: The list of accounts for the current user
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Accounts/details:
+    get:
+      tags:
+        - details
+      description: Returns additional account details than what is provided in the summary of all accounts. To retrieve the details, simply pass the accountId returned to you from the account summary.
+      parameters:
+        - name: accountId
+          in: header
+          description: 'The account identifier in encrypted format. Typically, this is not displayed to the customer'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Accounts/transactions:
+    get:
+      tags:
+        - transactions
+      description: Returns an array of transactions for the specified account. For investment transactions such as buying or selling a stock, they will be returned in the array investmentTransaction.
+      parameters:
+        - name: accountId
+          in: header
+          description: 'The account identifier in encrypted format.Typically, this is not displayed to the customer.'
+          required: true
+          type: string
+        - name: transactionStatus
+          in: header
+          description: 'Applicable for credit cards only. This is a reference data field.'
+          required: true
+          type: string
+        - name: nextStartIndex
+          in: header
+          description: 'In some cases there is more data than what can be returned in a single response. If there is additional data available a nextStartIndex will be returned. Pass the nextStartIndex in your next request to retrieve the next set of data.'
+          required: false
+          type: string
+        - name: requestSize
+          in: header
+          description: 'Requested number of transactions.The maximum we can provide in one response is 50. If nothing is specified, we will return 20. Currently this field is not supported.'
+          required: false
+          type: string
+        - name: transactionFromDate
+          in: header
+          description: 'Starting range for transaction date in ISO 8601 date format YYYY-MM-DD. Date Range: Upto last 12 months for CASA and last 3 Billing Cycle for credit card and ready credit accounts. Note :Applicable for advance search for CASA / Ready Credt / Credit Card account products'
+          required: false
+          type: string
+        - name: transactionToDate
+          in: header
+          description: 'End range for transaction date in ISO 8601 date format YYYY-MM-DD. Date Range: Upto last 12 months for CASA and last 3 Billing Cycle for credit card and ready credit accounts. Note :Applicable for advance search for CASA / Ready Credt / Credit Card account products'
+          required: false
+          type: string
+        - name: amountFrom
+          in: header
+          description: 'Starting range of transaction amount. Note: Applicable for Investment accounts'
+          required: false
+          type: string
+        - name: amountTo
+          in: header
+          description: 'End range of transaction amount. Note: Applicable for Investment accounts'
+          required: false
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  accounts:
+    type: object
+    properties:
+      Id:
+        type: string
+      Number:
+        type: string
+      BankID:
+        type: string
+      BankName:
+        type: string
+      NickName:
+        type: string
+      Type:
+        type: string
+      Status:
+        type: string
+      CurrencyCode:
+        type: string
+      TrackingID:
+        type: string
+      AccountGroup:
+        type: string
+      PrimaryAccount:
+        type: string
+      CoreAccount:
+        type: string
+      RoutingNum:
+        type: string
+      LocationID:
+        type: string
+      AccountDisplayText:
+        type: string
+      PriorDayBalance:
+        type: string
+      CurrentBalance:
+        type: string
+      AvailableBalance:
+        type: string
+      Account:
+        $ref: '#/definitions/accounts'
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      code:
+        type: integer
+        format: int32
+      fields:
+        type: string

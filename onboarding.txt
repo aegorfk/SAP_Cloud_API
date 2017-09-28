@@ -1,0 +1,699 @@
+swagger: '2.0'
+info:
+  version: 1.0.0.0.
+  title: Onboarding API
+  description: >-
+    The Onboarding API allows you to initiate the basic account opening process for new customers. The resources allow you to present eligible products, send applications for screening and submit a new application for one or more products. The resources also allow you to submit supporting documents. Application status can be checked at any point in the process, with decisioning happening in real time.
+host: sandbox.api.sap.com
+schemes:
+  - https
+basePath: /onboarding
+securityDefinitions:
+  basicAuth:
+    type: basic
+    description: HTTP Basic Authentication. Works over `HTTP` and `HTTPS`
+x-sap-api-type: ODATA
+paths:
+  /Onboarding/products:
+    get:
+      tags:
+        - products
+      description: Retrieves all products that are offered to prospects through your app.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: nextStartIndex
+          in: header
+          description: 'The start index of the next subset of products.'
+          required: false
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: The list of accounts for the current user
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Onboarding/secureApplication:
+    post:
+      tags:
+        - secureApplication
+      description: Pre-populates an application for card and banking products with the applicant's details. The API will then return an application ID that can be used to perform actions on the application and check status.
+      parameters:
+        - name: applicationAddRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: acceptLanguage
+          in: header
+          description: 'List of acceptable human languages for response'
+          required: false
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Onboarding/submitCreditApplication:
+    post:
+      tags:
+        - submitCreditApplication
+      description: Submits the specified unsecured credit application for screening.
+      parameters:
+        - name: applicationId
+          in: header
+          description: 'The unique identifier of the application'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: backgroundScreeningRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Onboarding/updateCreditApplication:
+    put:
+      tags:
+        - updateCreditApplication
+      description: Updates a saved application to correct information that was previously blank.
+      parameters:
+        - name: applicationId
+          in: header
+          description: 'Unique ID created for an Application. This is retuned back in ApplicationAdd response and the same should be passed here.'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: applicationUpdateRequest
+          in: header
+          description: 'Input Data to submit the application.'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Onboarding/requestCreditApplicationDecision:
+    post:
+      tags:
+        - requestCreditApplicationDecision
+      description: Returns the results of a decision inquiry for an application, including credit limit, counter-product offers and cross-sell offers along with the list of required documents.
+      parameters:
+        - name: applicationId
+          in: header
+          description: 'Unique ID created for an Application. This is retuned back in ApplicationAdd response and the same should be passed here.'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: inPrincipleApprovalRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Onboarding/crossSellProducts:
+    post:
+      tags:
+        - crossSellProducts
+      description: Accepts specified cross-sell product offers that were returned in the application decision.
+      parameters:
+        - name: offerAcceptanceRequest
+          in: header
+          description: 'Input Data to accept the product offered in the application.'
+          required: true
+          type: string
+        - name: applicationId
+          in: header
+          description: 'the ID of the application'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Onboarding/upoadApplicationDocuments:
+    post:
+      tags:
+        - upoadApplicationDocuments
+      description: Uploads documents to the specified application. Required documents such as drivers license and banking statements will be returned in the application decision.
+      parameters:
+        - name: applicationId
+          in: header
+          description: 'Unique ID created for an Application. This is retuned back in ApplicationAdd response and the same should be passed here.'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: insertDocument
+          in: header
+          description: 'Insert the documents in documentum.'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Onboarding/submitApplication:
+    post:
+      tags:
+        - submitApplication
+      description: Submits the created application to host systems for a particular application ID.
+      parameters:
+        - name: applicationId
+          in: header
+          description: 'Unique ID created for an Application. This is retuned back in ApplicationAdd response and the same should be passed here.'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: finalSubmitRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Onboarding/checkApplicationStatus:
+    post:
+      tags:
+        - checkApplicationStatus
+      description: Returns the status of the specified application.
+      parameters:
+        - name: applicationId
+          in: header
+          description: 'Unique ID created for an Application. This is retuned back in ApplicationAdd response and the same should be passed here.'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: controlFlow
+          in: header
+          description: 'Control Flow Id'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Onboarding/address:
+    get:
+      tags:
+        - address
+      description: Returns address parameters for the specified postal code. It can be used to either validate addresses or populate address fields.
+      parameters:
+        - name: postalCode
+          in: header
+          description: 'Postal Code'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Onboarding/submitProspect:
+    post:
+      tags:
+        - submitProspect
+      description: Creates a new prospective customer. Returns a prospect ID that can be used for reach out and conversions to applications.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: propectAddRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Onboarding/inquiry:
+    get:
+      tags:
+        - inquiry
+      description: Returns the application details and status for a specific application ID after a successful Multi Factor Authentication.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: applicationId
+          in: header
+          description: 'Unique identifier for the application.'
+          required: true
+          type: string
+        - name: controlFrowId
+          in: header
+          description: 'Control flow id is used to control the flow for subsequent requests in the session.'
+          required: false
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Onboarding/applicationStatus:
+    get:
+      tags:
+        - applicationStatus
+      description: Returns the current application status for a specific application ID.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: applicationId
+          in: header
+          description: 'Unique ID created for an Application. This is returned back in ApplicationAdd response and the same should be passed here.'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  accounts:
+    type: object
+    properties:
+      Id:
+        type: string
+      Number:
+        type: string
+      BankID:
+        type: string
+      BankName:
+        type: string
+      NickName:
+        type: string
+      Type:
+        type: string
+      Status:
+        type: string
+      CurrencyCode:
+        type: string
+      TrackingID:
+        type: string
+      AccountGroup:
+        type: string
+      PrimaryAccount:
+        type: string
+      CoreAccount:
+        type: string
+      RoutingNum:
+        type: string
+      LocationID:
+        type: string
+      AccountDisplayText:
+        type: string
+      PriorDayBalance:
+        type: string
+      CurrentBalance:
+        type: string
+      AvailableBalance:
+        type: string
+      Account:
+        $ref: '#/definitions/accounts'
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      code:
+        type: integer
+        format: int32
+      fields:
+        type: string

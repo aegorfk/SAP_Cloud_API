@@ -1,0 +1,318 @@
+swagger: '2.0'
+info:
+  version: 1.0.0.0.
+  title: Cards API
+  description: >-
+    The Cards API allows you to perform actions on the actual credit cards of the bank Customer who authorized your app.
+host: sandbox.api.sap.com
+schemes:
+  - https
+basePath: /cards
+securityDefinitions:
+  basicAuth:
+    type: basic
+    description: HTTP Basic Authentication. Works over `HTTP` and `HTTPS`
+x-sap-api-type: ODATA
+paths:
+  /Cards/summary:
+    get:
+      tags:
+        - summary
+      description: Returns an array of credit card numbers, credit limits, statuses and types for the customer who authorized your app.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'client_id generated during consumer onboarding'
+          required: true
+          type: string
+        - name: cardFunction
+          in: header
+          description: 'Card function. This is a reference data field.'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: The list of accounts for the current user
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Accounts/activation:
+    put:
+      tags:
+        - activation
+      description: Activates or deactivates a specified card's ability to be used overseas. Cards can be activated for overseas usage permanently or for a set period of time.
+      parameters:
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: cardId
+          in: header
+          description: 'Unique Id of the card for activation or de-activation.'
+          required: true
+          type: string
+        - name: overseasCardUsageRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Cards/reports:
+    put:
+      tags:
+        - reports
+      description: Reports a specified card as lost or stolen and returns a reference number to track the request.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: cardId
+          in: header
+          description: 'Unique Id of the card in encrypted format'
+          required: true
+          type: string
+        - name: reportLostStolenCardRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Cards/activations:
+    put:
+      tags:
+        - activations
+      description: Activates or deactivates the specified card's ability to be used locally.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: cardId
+          in: header
+          description: 'Unique Id of the card in encrypted format'
+          required: true
+          type: string
+        - name: cardsActivationCode
+          in: header
+          description: 'Activation Code for card Usage. Possible values:ACTIVATE, DEACTIVATE.This is a reference data field. Please use /v1/apac/utilities/referenceData/{cardActivationCode} resource to get valid value of this field with description. You can use the cardActivationCode as the referenceCode parameter to retrieve the values.'
+          required: true
+          type: string
+        - name: cardsUsageRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Cards/creditLimit:
+    post:
+      tags:
+        - creditLimits
+      description: Requests a permanent or temporary credit limit increase. For a temporary credit limit increase, the request must incidate that the type of request is temporary and include Card ID, requested limit and duration. For permanent increases, the Card ID and requested limit are the only required parameters.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: CreditLimitIncreaseRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  accounts:
+    type: object
+    properties:
+      Id:
+        type: string
+      Number:
+        type: string
+      BankID:
+        type: string
+      BankName:
+        type: string
+      NickName:
+        type: string
+      Type:
+        type: string
+      Status:
+        type: string
+      CurrencyCode:
+        type: string
+      TrackingID:
+        type: string
+      AccountGroup:
+        type: string
+      PrimaryAccount:
+        type: string
+      CoreAccount:
+        type: string
+      RoutingNum:
+        type: string
+      LocationID:
+        type: string
+      AccountDisplayText:
+        type: string
+      PriorDayBalance:
+        type: string
+      CurrentBalance:
+        type: string
+      AvailableBalance:
+        type: string
+      Account:
+        $ref: '#/definitions/accounts'
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      code:
+        type: integer
+        format: int32
+      fields:
+        type: string

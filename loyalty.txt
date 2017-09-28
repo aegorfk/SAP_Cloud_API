@@ -1,0 +1,281 @@
+swagger: '2.0'
+info:
+  version: 1.0.0.0.
+  title: Loyalty API
+  description: >-
+    Enrolls the customer into the Pay with Points program and returns a token, which requires activation and that will be used for subsequent API calls. Separate enrollment is required for each credit card.
+host: sandbox.api.sap.com
+schemes:
+  - https
+basePath: /loyalty
+securityDefinitions:
+  basicAuth:
+    type: basic
+    description: HTTP Basic Authentication. Works over `HTTP` and `HTTPS`
+x-sap-api-type: ODATA
+paths:
+  /Loyalty/enroll:
+    post:
+      tags:
+        - enroll
+      description: Enrolls the customer into the Pay with Points program and returns a token, which requires activation and that will be used for subsequent API calls. Separate enrollment is required for each credit card.
+      parameters:
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'Application/json'
+          required: true
+          type: string
+        - name: acceptlanguage
+          in: header
+          description: 'Accept-Language header.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'The client ID you received during application registration in the developer portal'
+          required: true
+          type: string
+        - name: rewardsLinkageRequest
+          in: header
+          description: 'Card information'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: The list of accounts for the current user
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Loyalty/activation:
+    post:
+      tags:
+        - activation
+      description: Activate the Rewards Token associated with the last four digits of the credit card number provided and the phone number.
+      parameters:
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'Application/json'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: acceptlanguage
+          in: header
+          description: 'Accept-Language header.'
+          required: true
+          type: string
+        - name: rewardLinkCode
+          in: header
+          description: 'Unique link code issued during registration process.'
+          required: true
+          type: string
+        - name: rewardLinkageActivationRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Loyalty/balance:
+    get:
+      tags:
+        - balance
+      description: Returns the bank Rewards Points balance and the details for converting the specified token to a dollar amount.
+      parameters:
+        - name: rewardLinkCode
+          in: header
+          description: 'Unique link code issued during registration process.'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: acceptlanguage
+          in: header
+          description: 'Accept-Language header.'
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /Loyalty/redemption:
+    post:
+      tags:
+        - redemption
+      description: Submits a points redemption request for the credit card associated with the specified token. Redemptions are processed as statement credits to the bank customer's account.
+      parameters:
+        - name: rewardLinkCode
+          in: header
+          description: 'Unique link code issued during registration process.'
+          required: true
+          type: string
+        - name: authorisation
+          in: header
+          description: 'The most recent Authorization token. This will have the format Bearer + {space} + {accessToken}. Example: Bearer KGNsaWVudF9pZDpjbGllbnRfc2VjcmV0KQ==.'
+          required: true
+          type: string
+        - name: uuid
+          in: header
+          description: '128 bit random UUID generated uniquely for every request.'
+          required: true
+          type: string
+        - name: accept
+          in: header
+          description: 'Content-Type that are acceptable for the response.'
+          required: true
+          type: string
+        - name: clientId
+          in: header
+          description: 'Client ID generated during application registration.'
+          required: true
+          type: string
+        - name: contentType
+          in: header
+          description: 'application/json'
+          required: true
+          type: string
+        - name: acceptlanguage
+          in: header
+          description: 'Accept-Language header.'
+          required: false
+          type: string
+        - name: rewardPointsRedemptionRequest
+          in: header
+          description: ''
+          required: true
+          type: string
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Account with given id
+          schema:
+            $ref: '#/definitions/accounts'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  accounts:
+    type: object
+    properties:
+      Id:
+        type: string
+      Number:
+        type: string
+      BankID:
+        type: string
+      BankName:
+        type: string
+      NickName:
+        type: string
+      Type:
+        type: string
+      Status:
+        type: string
+      CurrencyCode:
+        type: string
+      TrackingID:
+        type: string
+      AccountGroup:
+        type: string
+      PrimaryAccount:
+        type: string
+      CoreAccount:
+        type: string
+      RoutingNum:
+        type: string
+      LocationID:
+        type: string
+      AccountDisplayText:
+        type: string
+      PriorDayBalance:
+        type: string
+      CurrentBalance:
+        type: string
+      AvailableBalance:
+        type: string
+      Account:
+        $ref: '#/definitions/accounts'
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      code:
+        type: integer
+        format: int32
+      fields:
+        type: string
